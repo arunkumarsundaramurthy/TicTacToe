@@ -68,7 +68,6 @@ object TicTacToe {
   }
 
 
-
   def moveSelector(board: Board, maxPlayerSymbol: PlayerSymbol, round: Int): Int = {
     val minPlayerSymbol = opponentPlayerSymbol(maxPlayerSymbol)
     val isMaxPlayerSymbol: (PlayerSymbol => Boolean) = ((i: PlayerSymbol) => i == maxPlayerSymbol)
@@ -83,7 +82,11 @@ object TicTacToe {
     }
 
     def possibleMovesForRoundOne(board: Board, _toPlay: PlayerSymbol): List[(Board, Position)] = {
-      ({for(i <- 0 to (N-1)/2) yield i}.toList ::: {for(i <- ((N-1)/2)+N to ((N*N)-1)/2 by N) yield i}.toList).map((i)=> (board.updated(i, _toPlay), i))
+      ({
+        for (i <- 0 to (N - 1) / 2) yield i
+      }.toList ::: {
+        for (i <- ((N - 1) / 2) + N to ((N * N) - 1) / 2 by N) yield i
+      }.toList).map((i) => (board.updated(i, _toPlay), i))
     }
 
     def possibleBoards(board: Board, _toPlay: PlayerSymbol): List[Board] = {
@@ -95,12 +98,23 @@ object TicTacToe {
         def scoreOfSet(series: List[Int]): Int = {
           val temp = series.map((i) => board(i))
 
-          if (temp.count(isMinPlayerSymbol) == N) -(N * N * 4)
-          else if (temp.contains(minPlayerSymbol)) 0
-          else if (temp.count(isMaxPlayerSymbol) == N) ((N + N) * N)
-          else 2 * factorial(temp.count(isMaxPlayerSymbol))
+//          if(temp.isEmpty)
+//            println(temp.isEmpty)
+                    if (temp.count(isMinPlayerSymbol) == N) -(N * N * 4)
+                    else if (temp.contains(minPlayerSymbol)) 0
+                    else if (temp.count(isMaxPlayerSymbol) == N) ((N + N) * N)
+                    else 2 * factorial(temp.count(isMaxPlayerSymbol))
+          //          (temp.filter((i)=>i==maxPlayerSymbol).size) - (temp.filter((i)=>i==minPlayerSymbol).size)
+//          temp.map((i) => if (i == maxPlayerSymbol) 1 else if (i == minPlayerSymbol) -1 else 0).reduce((a, b) => a + b)
         }
-        (0 until N).map((i) => scoreOfSet(series.slice(i * N, (i * N) + N))).reduce((a, b) => a + b)
+
+        def helper(series: List[Int], acc: Score): Int = {
+          if(series.isEmpty) acc
+          else helper(series.drop(N), acc + scoreOfSet(series.take(N)))
+        }
+
+        //        (0 until N).map((i) => scoreOfSet(series.slice(i * N, (i * N) + N))).reduce((a, b) => a + b)
+        helper(series, 0)
       }
       scoreOfSeries(horizontal) + scoreOfSeries(vertical) + scoreOfSeries(diagonal1) + scoreOfSeries(diagonal2)
     }
@@ -147,7 +161,7 @@ object TicTacToe {
         helper(moves.tail, Math.max(currentScore, alpha), acc ::: List((currentScore, moves.head._2)))
       }
     }
-//    val rootNodes = {if(round==1) possibleMoves(board, maxPlayerSymbol) else possibleMoves(board, maxPlayerSymbol)}
+    //    val rootNodes = {if(round==1) possibleMoves(board, maxPlayerSymbol) else possibleMoves(board, maxPlayerSymbol)}
     helper(possibleMoves(board, maxPlayerSymbol), -9999, List()).maxBy((move) => move._1)._2
   }
 
@@ -159,7 +173,7 @@ object TicTacToe {
 
     def game(board: Board, toPlay: PlayerSymbol, time: Long, round: Int): Unit = {
       val currentTime = System.currentTimeMillis()
-      println("Time taken = " + ((currentTime-time)))
+      println("Time taken = " + ((currentTime - time)))
       printBoard(board)
       println()
       if (hasPlayerWon(board, opponentPlayerSymbol(toPlay))) println(opponentPlayerSymbol(toPlay) + " has Won!!")
