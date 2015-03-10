@@ -98,18 +98,24 @@ object TicTacToe {
         def scoreOfSet(series: List[Int]): Int = {
           val temp = series.map((i) => board(i))
 
-//          if(temp.isEmpty)
-//            println(temp.isEmpty)
-                    if (temp.count(isMinPlayerSymbol) == N) -(N * N * 4)
-                    else if (temp.contains(minPlayerSymbol)) 0
-                    else if (temp.count(isMaxPlayerSymbol) == N) ((N + N) * N)
-                    else 2 * factorial(temp.count(isMaxPlayerSymbol))
-          //          (temp.filter((i)=>i==maxPlayerSymbol).size) - (temp.filter((i)=>i==minPlayerSymbol).size)
+          if (temp.count(isMinPlayerSymbol) == N) -(N * N * 4)
+          else if (temp.contains(minPlayerSymbol)) 0
+          else if (temp.count(isMaxPlayerSymbol) == N) ((N + N) * N)
+          else 2 * factorial(temp.count(isMaxPlayerSymbol))
+
+//          (temp.filter((i)=>i==maxPlayerSymbol).size) - (temp.filter((i)=>i==minPlayerSymbol).size)
+//          factorial(temp.count(isMaxPlayerSymbol)) - factorial(temp.count(isMinPlayerSymbol))
 //          temp.map((i) => if (i == maxPlayerSymbol) 1 else if (i == minPlayerSymbol) -1 else 0).reduce((a, b) => a + b)
+
+//          def helper(series: List[Char], acc: Score): Int = {
+//            if(series.isEmpty) acc
+//            else helper(series.tail, acc + {if(series.head==maxPlayerSymbol) 1 else if(series.head==minPlayerSymbol) -1 else 0})
+//          }
+//          helper(temp, 0)
         }
 
         def helper(series: List[Int], acc: Score): Int = {
-          if(series.isEmpty) acc
+          if (series.isEmpty) acc
           else helper(series.drop(N), acc + scoreOfSet(series.take(N)))
         }
 
